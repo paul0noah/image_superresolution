@@ -183,3 +183,47 @@ def compute_average_image(imgs, algorithm='median'):
   avg_img = Image.fromarray(avg_img.astype(np.uint8))
 
   return avg_img
+
+
+def superresolution_pipeline(filenames,
+                              output_filename='superresmean.jpg',
+                              resize_scale=5,
+                              num_features=50,
+                              verbose=False):
+  '''
+    function which computes a superresolution image out of a list of
+    unaligned images of the sane object
+
+    input:
+      filenames:        list of filenames
+      output_filename:  filename of superresolution img
+      resize_scale:     amount by which the imgs should be enlarged
+      num_features:     number of features which are used for alignement
+      verbose:          if some plots should be generated or not
+    output:
+      superres_img:     superresolution image
+  '''
+  imgs = read_images(filenames)
+
+  if verbose:
+    plot_images(imgs, title='Input Images')
+
+  # resize images
+  for i in range(0, len(imgs)):
+    imgs[i] = resize_img(imgs[i], scale_factor=resize_scale)
+
+  imgs_gray = convert_to_grayscale(imgs)
+
+  keypoints, descriptors = extract_features(imgs_gray)
+
+  matches = match_descriptors_to_first_image(descriptors, num_keypoints)
+
+  aligned_images = warp_images_to_first_image(matches, keypoints, imgs)
+
+  superres_img = compute_average_image(aligned_images)
+  if verbose
+    plot_image(superres_img, title='Superres Image')
+
+  cv2.imwrite(output_filename, np.asarray(superres_img))
+
+  return superres_img
