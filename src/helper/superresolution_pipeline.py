@@ -139,3 +139,23 @@ def warp_images_to_first_image(matches, keypoints, imgs):
     aligned_images.append(img_dst)
 
   return aligned_images
+
+
+def resize_img(img, scale_factor=1.0):
+  '''
+    function to resize an image
+    -> scale_factor > 1 increase the size
+    -> scale_factor < 1 descrease the size
+
+    input:
+      img:           rgb image
+      scale_factor:  factor with which the resize should happen
+    output:
+      resized_img:   bigger or smaller image
+  '''
+  width  = int(img.shape[1] * scale_factor)
+  height = int(img.shape[0] * scale_factor)
+
+  new_size = (width, height)
+
+  return cv2.resize(img, new_size)
