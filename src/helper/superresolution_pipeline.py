@@ -159,3 +159,27 @@ def resize_img(img, scale_factor=1.0):
   new_size = (width, height)
 
   return cv2.resize(img, new_size)
+
+
+def compute_average_image(imgs, algorithm='median'):
+  '''
+    function to compute average img of a list of imgs
+
+    input:
+      imgs:       list of rgb image
+      algorithm:  'mean' or 'median' => median reproduces sharper imgs
+    output:
+      avg_img:    average image
+  '''
+  imgs = np.asarray(imgs)
+  if algorithm == 'median':
+    avg_img = np.median(imgs, axis=0)
+  elif algorithm == 'mean':
+    avg_img = np.mean(imgs, axis=0)
+  else:
+    raise NameError('Algorithm " %s " not supported' % algorithm)
+
+  # convert to image again
+  avg_img = Image.fromarray(avg_img.astype(np.uint8))
+
+  return avg_img
