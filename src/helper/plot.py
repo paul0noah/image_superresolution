@@ -9,7 +9,7 @@ def plot_image(img, title='', fig_size=[5, 3]):
 	plt.imshow(cv2.cvtColor(img, cv2.COLOR_BGR2RGB))
 
 def plot_matches(img1, keypoints1, img2, keypoints2, matches, fig_size=[15, 12]):
-	matches_img = cv2.drawMatches(img1, keypoints1, img2, keypoints2, matches, img2, flags=2)
+	matched_img = cv2.drawMatches(img1, keypoints1, img2, keypoints2, matches, img2, flags=2)
 	plot_image(matched_img, title='Related keypoints', fig_size=fig_size)
 
 def plot_image_with_keypoints(img, keypoints, title='', fig_size=[40, 35]):
