@@ -1,5 +1,6 @@
 from matplotlib import pyplot as plt
 import cv2
+import math
 
 def plot_image(img, title='', fig_size=[5, 3]):
 	plt.figure(figsize=fig_size)
