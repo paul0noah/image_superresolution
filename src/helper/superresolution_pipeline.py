@@ -86,3 +86,56 @@ def match_descriptors_to_first_image(descriptors, num_matches=50):
     matches.append(match[:num_matches])
 
   return matches
+
+
+def warp_images_to_first_image(matches, keypoints, imgs):
+    '''
+    function which warps all other images onto the first image
+
+    input:
+      matches:    list of matches between img1 and other images
+      keypoints:  keypoints of imgs
+      imgs:       rgb images
+    output:
+      aligned_images:  list of images which are warped onto the first image
+  '''
+
+  keypoints_img1 = keypoints[0]
+  img_src = imgs[0]
+  size_src = (img_src.shape[1], img_src.shape[0])
+
+  # first aligned image to first image is first image itself
+  aligned_images = [img_src]
+
+  img_counter = 1
+
+  for matches_of_img in matches:
+    # extract keypoints of other image
+    assert img_counter < len(keypoints)
+    keypoints_other_img = keypoints[img_counter]
+    img_src = imgs[img_counter]
+    img_counter = img_counter + 1
+
+    # reorder keypoints according to the matches and
+    # define src and destination keypoints for homography matrix
+    keypoints_src = []
+    keypoints_dest = []
+    for match in matches_of_img:
+      keypoints_src.append(keypoints_other_img[match.trainIdx].pt)
+      keypoints_dest.append(keypoints_img1[match.queryIdx].pt)
+
+    # convert to np array
+    keypoints_src = np.asarray(keypoints_src)
+    keypoints_dest = np.asarray(keypoints_dest)
+
+    # compute homography matrix
+    h, status = cv2.findHomography(keypoints_src, keypoints_dest)
+
+    # src is beeing warped onto destination
+    # => src is other image, destination is first image
+    # img_dest is warped img_src
+    img_dst = cv2.warpPerspective(img_src, h, size_src)
+
+    aligned_images.append(img_dst)
+
+  return aligned_images
