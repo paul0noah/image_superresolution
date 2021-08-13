@@ -31,3 +31,31 @@ def convert_to_grayscale(imgs):
     imgs_gray.append(img_gray)
 
   return imgs_gray
+
+
+def extract_features(imgs, num_features=100):
+  '''
+    function which extracts the SIFT features of the images
+
+    input:
+      imgs:         list of cv2 grayscale images
+      num_features: number of features to extract
+    output:
+      (keypoints, descriptor):  tuple containing list of
+                                keypoints and list of descriptors
+  '''
+
+  # create SIFT feature extractor
+  sift = cv2.xfeatures2d.SIFT_create(nfeatures=num_features)
+
+  all_keypoints = []
+  all_descriptors = []
+
+  for img in imgs:
+    # detect features from the image
+    keypoints, descriptors = sift.detectAndCompute(img, None)
+
+    all_keypoints.append(keypoints)
+    all_descriptors.append(descriptors)
+
+  return (all_keypoints, all_descriptors)
