@@ -59,3 +59,30 @@ def extract_features(imgs, num_features=100):
     all_descriptors.append(descriptors)
 
   return (all_keypoints, all_descriptors)
+
+
+def match_descriptors_to_first_image(descriptors, num_matches=50):
+  '''
+    function which matches all keypoints of all images to the first image
+
+    input:
+      descriptors: list of descriptors
+      num_matches: number of best matches to keep after matching
+    output:
+      matches:  list of matches between img1 and other images
+  '''
+
+  # create feature matcher
+  bf = cv2.BFMatcher(cv2.NORM_L2, crossCheck=True)
+
+  descriptor1 = descriptors[0]
+  matches = []
+
+  for descriptor in descriptors[1:]:
+    # match descriptors of both images
+    match = bf.match(descriptor1, descriptor)
+    # sort matches according to their distance and keep only num_matches matches
+    match = sorted(match, key = lambda x:x.distance)
+    matches.append(match[:num_matches])
+
+  return matches
